@@ -1,0 +1,3 @@
+[submodule "CosmiXs"]
+	path = CosmiXs
+	url = git@github.com:ajueid/CosmiXs.git
