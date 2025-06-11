@@ -24,7 +24,7 @@ jobs:
       # Step 2: Get version
       - name: Get version
         run: |
-          VERSION="$(grep -Eo -m 1 '([0-9]+\.){2}[0-9]+' ./version)
+          VERSION="$(grep -Eo -m 1 '([0-9]+\.){2}[0-9]+' ./version)"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       # Step 3: Tag the commit
