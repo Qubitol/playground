@@ -47,15 +47,15 @@ jobs:
           zip -@ playground.zip < filelist.txt
         shell: bash
 
-      # Step 5: Deploy to gh-pages
+      # Step 5: Create release
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ needs.get_version.outputs.version }}
-          release_name: ${{ needs.get_version.outputs.release }}
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: ${{ steps.get_version.outputs.release }}
           draft: false
           prerelease: false
 
