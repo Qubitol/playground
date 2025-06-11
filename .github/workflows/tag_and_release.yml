@@ -9,7 +9,6 @@ on:  # yamllint disable-line rule:truthy
     # Trigger on:
     branches:
       - main
-
 jobs:
   release_on_merge:
     if: github.event.pull_request.merged == true
@@ -48,7 +47,7 @@ jobs:
       # Step 5: Prepare release notes
       - name: Prepare release notes
         run: |
-          echo "# playground $VERSION ($(date +%Y-%m-%d))" > release_notes.md
+          echo "# playground ${{ steps.get_version.outputs.version }} ($(date +%Y-%m-%d))" > release_notes.md
         shell: bash
 
       # Step 6: Create release and upload artifacts
