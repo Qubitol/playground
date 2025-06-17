@@ -1,0 +1,36 @@
+---
+name: Tag on Merge
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+    # Trigger only after closing a PR on the master branch
+    # Accept only merged PR (see later)
+    types:
+      - closed
+    # Trigger on:
+    branches:
+      - main
+jobs:
+  tag_commit:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Check out the code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      # Step 2: Get version
+      - name: Get version
+        id: get_version
+        run: |
+          VERSION="$(grep -Eo -m 1 '([0-9]+\.){2}[0-9]+' ./version)"
+          echo "version=v$VERSION" >> $GITHUB_OUTPUT
+
+      # Step 3: Tag the commit
+      - name: Create tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag -a "${{ steps.get_version.outputs.version }}" -m "Release ${{ steps.get_version.outputs.version }}"
+          git push --follow-tags
