@@ -1,0 +1,36 @@
+---
+name: Create Release from Tag
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'       # e.g., 1.2.3
+      - 'v[0-9]+.[0-9]+rc[0-9]+'      # e.g., 1.2rc1
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code at tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          submodules: recursive
+
+      - name: Create artifacts
+        run: |
+          mkdir -p artifacts
+          git ls-files --recurse-submodules > filelist.txt
+          tar -czf artifacts/playground.tar.gz -T filelist.txt
+          zip -@ artifacts/playground.zip < filelist.txt
+
+      - name: Prepare release notes
+        run: |
+          echo "# playground ${{ steps.tag.outputs.tag }} ($(date +%Y-%m-%d))" > release_notes.md
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          bodyFile: "release_notes.md"
+          artifacts: "artifacts/*"
